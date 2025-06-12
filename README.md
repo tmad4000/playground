@@ -1,25 +1,33 @@
-# Playground
+# Game Collection
 
-A collection of fun web-based games and experiments.
+A collection of fun browser-based games built with HTML5 Canvas and JavaScript.
 
 ## Games
 
 ### Fling Platformer
-A physics-based platformer with unique swinging mechanics! Swing from platform to platform using momentum and gravity. Features multiple stages with different layouts and challenges.
+A physics-based platformer where you swing and fling your way through levels! Features realistic sling mechanics and multiple stages to master.
 
-[Watch the gameplay demo](https://www.loom.com/share/3c958e385c334c03bbe4381ba3dc65cb)
+[🎮 Play Fling Platformer](https://jacobcole.github.io/playground/fling-platformer.html)
 
 ### Maze
 A simple maze game where you navigate through randomly generated mazes.
 
-## How to Run
+## Running Locally
 
 1. Clone this repository
-2. Start a local server (e.g., `python3 -m http.server 8000`)
-3. Open `index.html` in your browser
+2. Open any of the HTML files in your browser
+3. Or run a local server:
+   ```bash
+   python3 -m http.server 8000
+   ```
+   Then visit `http://localhost:8000`
 
 ## Technologies Used
 
 - HTML5 Canvas
 - JavaScript
-- CSS 
+- CSS3
+
+## License
+
+MIT License 
