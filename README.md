@@ -9,7 +9,7 @@ A physics-based platformer where you swing and fling your way through levels! Fe
 
 [🎮 Play Fling Platformer](https://tmad4000.github.io/playground/fling-platformer.html)
 
-[📺 Watch Demo Video](https://www.loom.com/share/your-video-id)
+[📺 Watch Demo Video](https://www.loom.com/share/3c958e385c334c03bbe4381ba3dc65cb)
 
 ### Maze
 A simple maze game where you navigate through randomly generated mazes.
