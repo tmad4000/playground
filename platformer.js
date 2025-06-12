@@ -3,12 +3,13 @@ const ctx = canvas.getContext('2d');
 
 // Game constants
 const GRAVITY = 0.7;
-const GROUND_FRICTION = 0.95; // Friction when touching an object
+const GROUND_FRICTION = 0.9; // Decreased from 0.95
 const AIR_FRICTION = 0.99; // Friction in the air (much smaller)
 const PLAYER_SPEED = 5;
 const JUMP_POWER = 15;
 const ORBIT_SPEED = 0.1; // Speed of orbit rotation
 const MAX_ORBIT_VELOCITY = 10; // Maximum velocity when orbiting ends
+const ELASTICITY = 0.7; // Elasticity for bouncing off walls
 
 // Player object
 const player = {
@@ -139,6 +140,8 @@ function updatePlayer() {
           newY + player.height > plat.y
         ) {
           collision = true;
+          // Reverse orbit direction on collision
+          player.orbitDirection *= -1;
           break;
         }
       }
@@ -146,9 +149,6 @@ function updatePlayer() {
       if (!collision) {
         player.x = newX;
         player.y = newY;
-      } else {
-        player.orbiting = false;
-        player.orbitDirection = 0;
       }
     }
   } else {
@@ -196,15 +196,15 @@ function updatePlayer() {
         } else if (player.vy < 0 && player.y >= plat.y + plat.height - 1) {
           // From below
           player.y = plat.y + plat.height;
-          player.vy = 0;
+          player.vy = -player.vy * ELASTICITY; // Bounce off ceiling
         } else if (player.x + player.width - player.vx <= plat.x) {
           // From left
           player.x = plat.x - player.width;
-          player.vx = 0;
+          player.vx = -player.vx * ELASTICITY; // Bounce off left wall
         } else if (player.x - player.vx >= plat.x + plat.width) {
           // From right
           player.x = plat.x + plat.width;
-          player.vx = 0;
+          player.vx = -player.vx * ELASTICITY; // Bounce off right wall
         }
       }
     }
@@ -223,8 +223,14 @@ function updatePlayer() {
     }
 
     // Keep player in bounds
-    if (player.x < 0) player.x = 0;
-    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+    if (player.x < 0) {
+      player.x = 0;
+      player.vx = -player.vx * ELASTICITY; // Bounce off left boundary
+    }
+    if (player.x + player.width > canvas.width) {
+      player.x = canvas.width - player.width;
+      player.vx = -player.vx * ELASTICITY; // Bounce off right boundary
+    }
     if (player.y + player.height > canvas.height) {
       player.y = canvas.height - player.height;
       player.vy = 0;
