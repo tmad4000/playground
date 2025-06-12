@@ -1,26 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Maze Generator</title>
+    <title>Game Collection</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
         }
-        canvas {
-            border: 2px solid #333;
-            background-color: white;
+        .game-link {
+            display: block;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #333;
+        }
+        .game-link:hover {
+            background: #e5e5e5;
+        }
+        h1 {
+            color: #2c3e50;
         }
     </style>
 </head>
 <body>
-    <canvas id="mazeCanvas"></canvas>
-    <script src="maze.js"></script>
+    <h1>Game Collection</h1>
+    <a href="fling-platformer.html" class="game-link">
+        <h2>Fling Platformer</h2>
+        <p>A physics-based platformer where you swing and fling your way through levels!</p>
+    </a>
 </body>
 </html> 
