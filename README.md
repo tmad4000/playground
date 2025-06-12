@@ -7,7 +7,7 @@ A collection of fun web-based games built with HTML5, CSS, and JavaScript.
 ### Fling Platformer
 A physics-based platformer where you swing and fling your way through levels! Features realistic sling mechanics and multiple stages to master.
 
-[🎮 Play Fling Platformer](https://jacobcole.github.io/playground/fling-platformer.html)
+[🎮 Play Fling Platformer](https://tmad4000.github.io/playground/fling-platformer.html)
 
 [📺 Watch Demo Video](https://www.loom.com/share/your-video-id)
 
