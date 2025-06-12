@@ -1,6 +1,6 @@
 # Game Collection
 
-A collection of fun browser-based games built with HTML5 Canvas and JavaScript.
+A collection of fun web-based games built with HTML5, CSS, and JavaScript.
 
 ## Games
 
@@ -8,6 +8,8 @@ A collection of fun browser-based games built with HTML5 Canvas and JavaScript.
 A physics-based platformer where you swing and fling your way through levels! Features realistic sling mechanics and multiple stages to master.
 
 [🎮 Play Fling Platformer](https://jacobcole.github.io/playground/fling-platformer.html)
+
+[📺 Watch Demo Video](https://www.loom.com/share/your-video-id)
 
 ### Maze
 A simple maze game where you navigate through randomly generated mazes.
