@@ -101,23 +101,27 @@ canvas.addEventListener('mousedown', (e) => {
   }
 });
 
-canvas.addEventListener('mouseup', () => {
-  if (player.orbiting && prevOrbitPos) {
-    player.vx = player.x - prevOrbitPos.x;
-    player.vy = player.y - prevOrbitPos.y;
-    // Clamp velocity to maximum
-    const speed = Math.sqrt(player.vx * player.vx + player.vy * player.vy);
-    if (speed > MAX_ORBIT_VELOCITY) {
-      const ratio = MAX_ORBIT_VELOCITY / speed;
-      player.vx *= ratio;
-      player.vy *= ratio;
-    }
+canvas.addEventListener('mouseup', (e) => {
+  if (drawLine) {
+    // Calculate tangential velocity at release
+    const dx = player.x + player.width / 2 - lineEnd.x;
+    const dy = player.y + player.height / 2 - lineEnd.y;
+    const radius = Math.sqrt(dx * dx + dy * dy);
+    const angularVelocity = player.orbitDirection * ORBIT_SPEED;
+    
+    // Calculate tangential velocity (perpendicular to radius)
+    const tangentialSpeed = radius * angularVelocity;
+    const tangentAngle = Math.atan2(dy, dx) + (Math.PI / 2) * player.orbitDirection;
+    
+    // Set velocity components based on tangential direction
+    player.vx = tangentialSpeed * Math.cos(tangentAngle);
+    player.vy = tangentialSpeed * Math.sin(tangentAngle);
+    
+    drawLine = false;
+    lineEnd = null;
+    player.orbiting = false;
+    player.orbitDirection = 0;
   }
-  drawLine = false;
-  lineEnd = null;
-  player.orbiting = false;
-  player.orbitDirection = 0;
-  prevOrbitPos = null;
 });
 
 function updatePlayer() {
