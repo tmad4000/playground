@@ -19,7 +19,8 @@ const player = {
   onGround: false,
   color: '#ff5252',
   orbiting: false,
-  orbitDirection: 0 // -1 for left, 1 for right, 0 for no orbit
+  orbitDirection: 0, // -1 for left, 1 for right, 0 for no orbit
+  momentum: { x: 0, y: 0 } // Momentum for orbiting
 };
 
 // Platforms (multi-level arena) + vertical walls
@@ -37,6 +38,24 @@ const platforms = [
   { x: 780, y: 0, width: 20, height: 500 }
 ];
 
+// Second stage platforms
+const secondStagePlatforms = [
+  { x: 0, y: 470, width: 800, height: 30 }, // ground
+  { x: 200, y: 370, width: 200, height: 20 },
+  { x: 500, y: 320, width: 180, height: 20 },
+  { x: 300, y: 220, width: 150, height: 20 },
+  // Left wall
+  { x: 0, y: 0, width: 20, height: 500 },
+  // Right wall
+  { x: 780, y: 0, width: 20, height: 500 }
+];
+
+// Door to second stage
+const door = { x: 700, y: 430, width: 40, height: 40, color: '#00e676' };
+
+// Current stage
+let currentStage = 1;
+
 // Input state
 const keys = {};
 window.addEventListener('keydown', e => { keys[e.key] = true; });
@@ -45,13 +64,15 @@ window.addEventListener('keyup', e => { keys[e.key] = false; });
 // Line drawing state
 let drawLine = false;
 let lineEnd = null;
+let prevOrbitPos = null;
 
 canvas.addEventListener('mousedown', (e) => {
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
   // Check if click is on any platform or wall
-  for (const plat of platforms) {
+  const currentPlatforms = currentStage === 1 ? platforms : secondStagePlatforms;
+  for (const plat of currentPlatforms) {
     if (
       mouseX >= plat.x &&
       mouseX <= plat.x + plat.width &&
@@ -66,10 +87,15 @@ canvas.addEventListener('mousedown', (e) => {
 });
 
 canvas.addEventListener('mouseup', () => {
+  if (player.orbiting && prevOrbitPos) {
+    player.vx = player.x - prevOrbitPos.x;
+    player.vy = player.y - prevOrbitPos.y;
+  }
   drawLine = false;
   lineEnd = null;
   player.orbiting = false;
   player.orbitDirection = 0;
+  prevOrbitPos = null;
 });
 
 function updatePlayer() {
@@ -84,6 +110,8 @@ function updatePlayer() {
     }
 
     if (player.orbiting) {
+      // Store previous position before updating
+      prevOrbitPos = { x: player.x, y: player.y };
       const dx = player.x + player.width / 2 - lineEnd.x;
       const dy = player.y + player.height / 2 - lineEnd.y;
       const angle = Math.atan2(dy, dx) + player.orbitDirection * ORBIT_SPEED;
@@ -93,7 +121,8 @@ function updatePlayer() {
 
       // Check collision before updating position
       let collision = false;
-      for (const plat of platforms) {
+      const currentPlatforms = currentStage === 1 ? platforms : secondStagePlatforms;
+      for (const plat of currentPlatforms) {
         if (
           newX < plat.x + plat.width &&
           newX + player.width > plat.x &&
@@ -139,7 +168,8 @@ function updatePlayer() {
 
     // Collision detection
     player.onGround = false;
-    for (const plat of platforms) {
+    const currentPlatforms = currentStage === 1 ? platforms : secondStagePlatforms;
+    for (const plat of currentPlatforms) {
       // AABB collision
       if (
         player.x < plat.x + plat.width &&
@@ -168,6 +198,19 @@ function updatePlayer() {
       }
     }
 
+    // Check for door collision
+    if (
+      currentStage === 1 &&
+      player.x < door.x + door.width &&
+      player.x + player.width > door.x &&
+      player.y < door.y + door.height &&
+      player.y + player.height > door.y
+    ) {
+      currentStage = 2;
+      player.x = 100;
+      player.y = 400;
+    }
+
     // Keep player in bounds
     if (player.x < 0) player.x = 0;
     if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
@@ -184,8 +227,15 @@ function draw() {
 
   // Draw platforms and walls
   ctx.fillStyle = '#444';
-  for (const plat of platforms) {
+  const currentPlatforms = currentStage === 1 ? platforms : secondStagePlatforms;
+  for (const plat of currentPlatforms) {
     ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
+  }
+
+  // Draw door if in first stage
+  if (currentStage === 1) {
+    ctx.fillStyle = door.color;
+    ctx.fillRect(door.x, door.y, door.width, door.height);
   }
 
   // Draw player
@@ -211,4 +261,31 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-gameLoop(); 
+gameLoop();
+
+// Add stage selection controls
+const stageControls = document.createElement('div');
+stageControls.style.position = 'absolute';
+stageControls.style.top = '10px';
+stageControls.style.left = '10px';
+stageControls.style.zIndex = '1000';
+
+const stage1Button = document.createElement('button');
+stage1Button.textContent = 'Stage I';
+stage1Button.onclick = () => {
+  currentStage = 1;
+  player.x = 100;
+  player.y = 400;
+};
+
+const stage2Button = document.createElement('button');
+stage2Button.textContent = 'Stage II';
+stage2Button.onclick = () => {
+  currentStage = 2;
+  player.x = 100;
+  player.y = 400;
+};
+
+stageControls.appendChild(stage1Button);
+stageControls.appendChild(stage2Button);
+document.body.appendChild(stageControls); 
