@@ -13,10 +13,10 @@ const ELASTICITY = 0.7; // Elasticity for bouncing off walls
 
 // Player object
 const player = {
-  x: 100,
-  y: 400,
-  width: 40,
-  height: 40,
+  x: 75,  // Start on the starting platform
+  y: 380, // Just above the starting platform
+  width: 20,
+  height: 20,
   vx: 0,
   vy: 0,
   onGround: false,
@@ -60,6 +60,21 @@ const thirdStagePlatforms = [
   { x: 400, y: 50, width: 100, height: 20 }, // Additional higher platform
 ];
 
+// Spider-Man stage
+const stage4 = [
+  // Ground
+  { x: 0, y: 500, width: 800, height: 20 },
+  // Starting platform
+  { x: 50, y: 400, width: 100, height: 20 },
+  // Main platforms
+  { x: 200, y: 450, width: 100, height: 20 },
+  { x: 400, y: 300, width: 100, height: 20 },
+  { x: 600, y: 250, width: 100, height: 20 },
+  // Side platforms for wall jumping
+  { x: 0, y: 400, width: 50, height: 20 },
+  { x: 750, y: 300, width: 50, height: 20 }
+];
+
 // Define the door
 const door = {
   x: 700,
@@ -69,7 +84,7 @@ const door = {
 };
 
 // Track the current stage
-let currentStage = 3; // Set stage 3 as the default
+let currentStage = 4; // Set Spider-Man stage as default
 
 // Input state
 const keys = {};
@@ -86,7 +101,7 @@ canvas.addEventListener('mousedown', (e) => {
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
   // Check if click is on any platform or wall
-  const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : thirdStagePlatforms);
+  const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : (currentStage === 3 ? thirdStagePlatforms : stage4));
   for (const plat of currentPlatforms) {
     if (
       mouseX >= plat.x &&
@@ -110,8 +125,9 @@ canvas.addEventListener('mouseup', (e) => {
     const angularVelocity = player.orbitDirection * ORBIT_SPEED;
     
     // Calculate tangential velocity (perpendicular to radius)
-    const tangentialSpeed = radius * angularVelocity;
-    const tangentAngle = Math.atan2(dy, dx) + (Math.PI / 2) * player.orbitDirection;
+    const tangentialSpeed = radius * Math.abs(angularVelocity);
+    // Calculate the tangent angle based on the orbit direction
+    const tangentAngle = Math.atan2(dy, dx) + (Math.PI / 2) * Math.sign(angularVelocity);
     
     // Set velocity components based on tangential direction
     player.vx = tangentialSpeed * Math.cos(tangentAngle);
@@ -147,7 +163,7 @@ function updatePlayer() {
 
       // Check collision before updating position
       let collision = false;
-      const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : thirdStagePlatforms);
+      const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : (currentStage === 3 ? thirdStagePlatforms : stage4));
       for (const plat of currentPlatforms) {
         if (
           newX < plat.x + plat.width &&
@@ -195,7 +211,7 @@ function updatePlayer() {
 
     // Collision detection
     player.onGround = false;
-    const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : thirdStagePlatforms);
+    const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : (currentStage === 3 ? thirdStagePlatforms : stage4));
     for (const plat of currentPlatforms) {
       // AABB collision
       if (
@@ -260,7 +276,7 @@ function draw() {
 
   // Draw platforms and walls
   ctx.fillStyle = '#444';
-  const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : thirdStagePlatforms);
+  const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : (currentStage === 3 ? thirdStagePlatforms : stage4));
   for (const plat of currentPlatforms) {
     ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
   }
@@ -296,12 +312,13 @@ function gameLoop() {
 
 gameLoop();
 
-// Add stage selection controls
+// Add stage selection buttons
 const stageControls = document.createElement('div');
 stageControls.style.position = 'absolute';
 stageControls.style.top = '10px';
 stageControls.style.left = '10px';
-stageControls.style.zIndex = '1000';
+stageControls.style.display = 'flex';
+stageControls.style.gap = '10px';
 
 const stage1Button = document.createElement('button');
 stage1Button.textContent = 'Stage I';
@@ -327,7 +344,16 @@ stage3Button.onclick = () => {
   player.y = 400;
 };
 
+const spidermanButton = document.createElement('button');
+spidermanButton.textContent = 'Spider-Man Stage';
+spidermanButton.onclick = () => {
+  currentStage = 4;
+  player.x = 75;
+  player.y = 380;
+};
+
 stageControls.appendChild(stage1Button);
 stageControls.appendChild(stage2Button);
 stageControls.appendChild(stage3Button);
+stageControls.appendChild(spidermanButton);
 document.body.appendChild(stageControls); 
