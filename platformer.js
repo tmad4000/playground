@@ -3,10 +3,12 @@ const ctx = canvas.getContext('2d');
 
 // Game constants
 const GRAVITY = 0.7;
-const FRICTION = 0.95;
+const GROUND_FRICTION = 0.95; // Friction when touching an object
+const AIR_FRICTION = 0.99; // Friction in the air (much smaller)
 const PLAYER_SPEED = 5;
 const JUMP_POWER = 15;
 const ORBIT_SPEED = 0.1; // Speed of orbit rotation
+const MAX_ORBIT_VELOCITY = 10; // Maximum velocity when orbiting ends
 
 // Player object
 const player = {
@@ -90,6 +92,13 @@ canvas.addEventListener('mouseup', () => {
   if (player.orbiting && prevOrbitPos) {
     player.vx = player.x - prevOrbitPos.x;
     player.vy = player.y - prevOrbitPos.y;
+    // Clamp velocity to maximum
+    const speed = Math.sqrt(player.vx * player.vx + player.vy * player.vy);
+    if (speed > MAX_ORBIT_VELOCITY) {
+      const ratio = MAX_ORBIT_VELOCITY / speed;
+      player.vx *= ratio;
+      player.vy *= ratio;
+    }
   }
   drawLine = false;
   lineEnd = null;
@@ -149,7 +158,9 @@ function updatePlayer() {
     } else if (keys['ArrowRight'] || keys['d']) {
       player.vx = PLAYER_SPEED;
     } else {
-      player.vx *= FRICTION;
+      // Apply friction based on whether the player is on the ground or in the air
+      const friction = player.onGround ? GROUND_FRICTION : AIR_FRICTION;
+      player.vx *= friction;
       if (Math.abs(player.vx) < 0.1) player.vx = 0;
     }
 
