@@ -41,23 +41,35 @@ const platforms = [
   { x: 780, y: 0, width: 20, height: 500 }
 ];
 
-// Second stage platforms
+// Define platforms for the second stage
 const secondStagePlatforms = [
-  { x: 0, y: 470, width: 800, height: 30 }, // ground
-  { x: 200, y: 370, width: 200, height: 20 },
-  { x: 500, y: 320, width: 180, height: 20 },
-  { x: 300, y: 220, width: 150, height: 20 },
-  // Left wall
-  { x: 0, y: 0, width: 20, height: 500 },
-  // Right wall
-  { x: 780, y: 0, width: 20, height: 500 }
+  { x: 0, y: 500, width: 800, height: 20 }, // Ground
+  { x: 100, y: 400, width: 100, height: 20 }, // Platform
+  { x: 300, y: 300, width: 100, height: 20 }, // Platform
+  { x: 500, y: 200, width: 100, height: 20 }, // Platform
+  { x: 700, y: 100, width: 100, height: 20 }, // Platform
 ];
 
-// Door to second stage
-const door = { x: 700, y: 430, width: 40, height: 40, color: '#00e676' };
+// Define platforms for the third stage
+const thirdStagePlatforms = [
+  { x: 0, y: 500, width: 800, height: 20 }, // Ground
+  { x: 100, y: 400, width: 100, height: 20 }, // Platform
+  { x: 300, y: 300, width: 100, height: 20 }, // Platform
+  { x: 500, y: 200, width: 100, height: 20 }, // Platform
+  { x: 700, y: 100, width: 100, height: 20 }, // Platform
+  { x: 400, y: 50, width: 100, height: 20 }, // Additional higher platform
+];
 
-// Current stage
-let currentStage = 1;
+// Define the door
+const door = {
+  x: 700,
+  y: 80,
+  width: 40,
+  height: 60,
+};
+
+// Track the current stage
+let currentStage = 3; // Set stage 3 as the default
 
 // Input state
 const keys = {};
@@ -74,7 +86,7 @@ canvas.addEventListener('mousedown', (e) => {
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
   // Check if click is on any platform or wall
-  const currentPlatforms = currentStage === 1 ? platforms : secondStagePlatforms;
+  const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : thirdStagePlatforms);
   for (const plat of currentPlatforms) {
     if (
       mouseX >= plat.x &&
@@ -131,7 +143,7 @@ function updatePlayer() {
 
       // Check collision before updating position
       let collision = false;
-      const currentPlatforms = currentStage === 1 ? platforms : secondStagePlatforms;
+      const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : thirdStagePlatforms);
       for (const plat of currentPlatforms) {
         if (
           newX < plat.x + plat.width &&
@@ -179,7 +191,7 @@ function updatePlayer() {
 
     // Collision detection
     player.onGround = false;
-    const currentPlatforms = currentStage === 1 ? platforms : secondStagePlatforms;
+    const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : thirdStagePlatforms);
     for (const plat of currentPlatforms) {
       // AABB collision
       if (
@@ -244,7 +256,7 @@ function draw() {
 
   // Draw platforms and walls
   ctx.fillStyle = '#444';
-  const currentPlatforms = currentStage === 1 ? platforms : secondStagePlatforms;
+  const currentPlatforms = currentStage === 1 ? platforms : (currentStage === 2 ? secondStagePlatforms : thirdStagePlatforms);
   for (const plat of currentPlatforms) {
     ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
   }
@@ -303,6 +315,15 @@ stage2Button.onclick = () => {
   player.y = 400;
 };
 
+const stage3Button = document.createElement('button');
+stage3Button.textContent = 'Stage III';
+stage3Button.onclick = () => {
+  currentStage = 3;
+  player.x = 100;
+  player.y = 400;
+};
+
 stageControls.appendChild(stage1Button);
 stageControls.appendChild(stage2Button);
+stageControls.appendChild(stage3Button);
 document.body.appendChild(stageControls); 
