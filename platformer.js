@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 
 // Game constants
 const GRAVITY = 0.7;
-const FRICTION = 0.8;
+const FRICTION = 0.95;
 const PLAYER_SPEED = 5;
 const JUMP_POWER = 15;
 const ORBIT_SPEED = 0.1; // Speed of orbit rotation
