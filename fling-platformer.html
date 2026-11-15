@@ -19,10 +19,13 @@
       display: block;
     }
   </style>
+<link rel="stylesheet" href="release.css">
+<script defer src="app-stamp.js"></script>
 </head>
-<body>
+<body class="fling-game">
   <canvas id="gameCanvas" width="800" height="500"></canvas>
   <script src="fling-platformer.js"></script>
-<script defer src="https://worldissuetracker.com/widget/wit-feedback.js" data-tracker-slug="playground-feedback" data-app="Playground" data-mode="feedback" data-trigger="tab" data-label="Send feedback"></script>
+<footer class="app-release"><span id="wit-feedback-mount"></span><span data-app-stamp data-show="time" data-src="version.json"></span></footer>
+<script defer src="https://worldissuetracker.com/widget/wit-feedback.js" data-tracker-slug="playground-feedback" data-app="Playground" data-mode="feedback" data-trigger="tab" data-label="Send feedback" data-mount-selector="#wit-feedback-mount"></script>
 </body>
 </html> 
